@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Interests - {{ listing.title }} - The Helping Hand{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-title">
+        <h2>💡 People Interested in Your Listing</h2>
+        <p>Listing: <a href="{{ url_for('listing_detail', id=listing.id) }}">{{ listing.title }}</a></p>
+    </div>
+
+    <a href="{{ url_for('listing_detail', id=listing.id) }}" class="btn btn-secondary" style="margin-bottom: 1.5rem;">← Back to Listing</a>
+
+    {% if interests %}
+        <div class="interests-list">
+            {% for interest in interests %}
+                <div class="interest-card" style="background: var(--card-background); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3 style="margin: 0;">
+                                <a href="{{ url_for('user_profile', id=interest.interested_user.id) }}">
+                                    👤 {{ interest.interested_user.username }}
+                                </a>
+                            </h3>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0.25rem 0;">
+                                {{ interest.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </p>
+                            
+                            {% if interest.interested_user.location %}
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                    📍 {{ interest.interested_user.location }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if interest.message %}
+                                <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-top: 0.75rem;">
+                                    <strong>Message:</strong>
+                                    <p style="margin: 0.5rem 0 0 0;">{{ interest.message }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div style="text-align: right;">
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Contact:</p>
+                            <p style="margin: 0;"><a href="mailto:{{ interest.interested_user.email }}">{{ interest.interested_user.email }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem; background: var(--card-background); border-radius: var(--border-radius);">
+            <p style="font-size: 3rem; margin-bottom: 1rem;">💡</p>
+            <p style="color: var(--text-secondary);">No one has shown interest in this listing yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }}'s Profile - The Helping Hand{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- User Profile Header -->
+    <div class="profile-header" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; padding: 2rem; border-radius: var(--border-radius); margin-bottom: 2rem;">
+        <h1>👤 {{ user.username }}</h1>
+        {% if user.location %}
+            <p>📍 {{ user.location }}</p>
+        {% endif %}
+        <p>Member since {{ user.created_at.strftime('%B %Y') }}</p>
+        
+        <!-- User Stats -->
+        <div style="display: flex; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap;">
+            <div class="stat" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold;">{{ listings|length }}</div>
+                <div>Listings</div>
+            </div>
+            <div class="stat" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold;">
+                    {% if user.average_rating %}
+                        ⭐ {{ user.average_rating }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+                <div>Avg Rating</div>
+            </div>
+            <div class="stat" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold;">{{ user.total_feedbacks_received }}</div>
+                <div>Reviews</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User's Listings -->
+    <div class="section-title">
+        <h2>{{ user.username }}'s Listings</h2>
+    </div>
+
+    {% if listings %}
+        <div class="cards-grid">
+            {% for listing in listings %}
+                <div class="card">
+                    <div class="card-header">
+                        <span class="category">{{ listing.category }}</span>
+                        <span class="type">{{ listing.listing_type }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>{{ listing.title }}</h3>
+                        <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+                        
+                        {% if listing.average_rating %}
+                            <div class="rating-display" style="margin: 0.5rem 0;">
+                                <span class="stars">
+                                    {% for i in range(listing.average_rating|int) %}⭐{% endfor %}
+                                </span>
+                                <span style="color: var(--text-secondary);">
+                                    {{ listing.average_rating }}/5 ({{ listing.feedbacks|length }})
+                                </span>
+                            </div>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('listing_detail', id=listing.id) }}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center; color: var(--text-secondary);">This user has no listings yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
